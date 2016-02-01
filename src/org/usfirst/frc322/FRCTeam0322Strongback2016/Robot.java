@@ -5,10 +5,14 @@ import org.strongback.Strongback;
 import org.strongback.components.Motor;
 import org.strongback.components.ui.ContinuousRange;
 import org.strongback.components.ui.FlightStick;
+import org.strongback.components.ThreeAxisAccelerometer;
+import org.strongback.components.AngleSensor;
 import org.strongback.drive.TankDrive;
 import org.strongback.hardware.Hardware;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 public class Robot extends IterativeRobot {
 
@@ -17,10 +21,16 @@ public class Robot extends IterativeRobot {
 	private static final int LR_MOTOR_PORT = 2;
 	private static final int RF_MOTOR_PORT = 3;
 	private static final int RR_MOTOR_PORT = 4;
+	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
+	private static final Range ACCEL_RANGE = Range.k2G;
+	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
 
 	private TankDrive drive;
 	private ContinuousRange driveSpeed;
 	private ContinuousRange turnSpeed;
+
+	private ThreeAxisAccelerometer accel;
+	private AngleSensor gyro;
 	
     @Override
     public void robotInit() {
@@ -34,8 +44,10 @@ public class Robot extends IterativeRobot {
     	driveSpeed = driveStick.getPitch();
     	turnSpeed = driveStick.getRoll().invert();
     	
+    	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
+    	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
+    	
     	Strongback.configure().recordNoEvents().recordNoData().initialize();
-
     }
 
     @Override
