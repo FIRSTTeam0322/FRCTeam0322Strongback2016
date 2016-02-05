@@ -51,9 +51,20 @@ public class Robot extends IterativeRobot {
     }
 
     @Override
-    public void teleopInit() {
+    public void autonomousInit() {
         // Start Strongback functions ...
         Strongback.start();
+    }
+    
+    @Override
+    public void autonomousPeriodic() {
+    	
+    }
+    
+    @Override
+    public void teleopInit() {
+        // Restart Strongback functions ...
+        Strongback.restart();
     }
 
     @Override
