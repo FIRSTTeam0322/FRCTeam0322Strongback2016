@@ -11,9 +11,12 @@ import org.strongback.drive.TankDrive;
 import org.strongback.hardware.Hardware;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 public class Robot extends IterativeRobot {
 
@@ -48,8 +51,12 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	Motor left = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
     								Hardware.Motors.talon(LR_MOTOR_PORT)).invert();
+    	LiveWindow.addActuator("Left Front Motor", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LF_MOTOR_PORT));
+    	LiveWindow.addActuator("Left Rear Motor", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(LR_MOTOR_PORT));
     	Motor right = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
 									Hardware.Motors.talon(RR_MOTOR_PORT));
+    	LiveWindow.addActuator("Right Front Motor", RF_MOTOR_PORT, (Talon) Hardware.Motors.talon(RF_MOTOR_PORT));
+    	LiveWindow.addActuator("Right Rear Motor", RR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RR_MOTOR_PORT));
     	drive = new TankDrive(left, right);
     	
     	FlightStick leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
@@ -58,10 +65,14 @@ public class Robot extends IterativeRobot {
     	rightSpeed = rightDriveStick.getPitch();
     	
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
+    	//LiveWindow.addSensor("Accelerometer", 1, accel);
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
+    	//LiveWindow.addSensor("Gyroscope", 0, gyro);
     	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
     	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
-
+    	//LiveWindow.addSensor("Left Encoder", LEFT_ENCOODER_PORT_A, leftEncoder);
+    	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
+    	
     	cameraServer = CameraServer.getInstance();
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
