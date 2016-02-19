@@ -23,9 +23,15 @@ public class Robot extends IterativeRobot {
 	private static final int LR_MOTOR_PORT = 1;
 	private static final int RF_MOTOR_PORT = 3;
 	private static final int RR_MOTOR_PORT = 2;
+	private static final int LEFT_ENCOODER_PORT_A = 0;
+	private static final int LEFT_ENCOODER_PORT_B = 1;
+	private static final int RIGHT_ENCOODER_PORT_A = 2;
+	private static final int RIGHT_ENCOODER_PORT_B = 3;
+	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
+
 
 	private TankDrive drive;
 	private ContinuousRange leftSpeed;
@@ -33,6 +39,8 @@ public class Robot extends IterativeRobot {
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
+	private AngleSensor leftEncoder;
+	private AngleSensor rightEncoder;
 	
 	public static CameraServer cameraServer;
 	
@@ -51,8 +59,10 @@ public class Robot extends IterativeRobot {
     	
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
-    	
-        cameraServer = CameraServer.getInstance();
+    	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
+    	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
+
+    	cameraServer = CameraServer.getInstance();
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
     	
