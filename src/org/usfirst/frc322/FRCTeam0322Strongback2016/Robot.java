@@ -5,6 +5,7 @@ import org.strongback.Strongback;
 import org.strongback.components.Motor;
 import org.strongback.components.ui.ContinuousRange;
 import org.strongback.components.ui.FlightStick;
+import org.strongback.components.ui.Gamepad;
 import org.strongback.components.ThreeAxisAccelerometer;
 import org.strongback.components.AngleSensor;
 import org.strongback.drive.TankDrive;
@@ -13,15 +14,16 @@ import org.strongback.hardware.Hardware;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 public class Robot extends IterativeRobot {
 
 	private static final int LEFT_DRIVESTICK_PORT = 0;
 	private static final int RIGHT_DRIVESTICK_PORT = 1;
+	private static final int MANIPULATOR_STICK_PORT = 2;
 	private static final int LF_MOTOR_PORT = 0;
 	private static final int LR_MOTOR_PORT = 1;
 	private static final int RF_MOTOR_PORT = 3;
@@ -47,6 +49,7 @@ public class Robot extends IterativeRobot {
 	
 	public static CameraServer cameraServer;
 	
+	
     @Override
     public void robotInit() {
     	Motor left = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
@@ -61,6 +64,7 @@ public class Robot extends IterativeRobot {
     	
     	FlightStick leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
     	FlightStick rightDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_DRIVESTICK_PORT);
+    	Gamepad manipulatorStick = xbox360(MANIPULATOR_STICK_PORT);
     	leftSpeed = leftDriveStick.getPitch();
     	rightSpeed = rightDriveStick.getPitch();
     	
@@ -68,8 +72,8 @@ public class Robot extends IterativeRobot {
     	//LiveWindow.addSensor("Accelerometer", 1, accel);
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
     	//LiveWindow.addSensor("Gyroscope", 0, gyro);
-    	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
-    	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
+    	//leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
+    	//rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
     	//LiveWindow.addSensor("Left Encoder", LEFT_ENCOODER_PORT_A, leftEncoder);
     	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
     	
@@ -108,5 +112,26 @@ public class Robot extends IterativeRobot {
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
     }
-
+    public static org.strongback.components.ui.Gamepad xbox360(int port) {
+    	Joystick joystick = new Joystick(port);
+    	return Gamepad.create(joystick::getRawAxis,
+    						  joystick::getRawButton,
+    						  joystick::getPOV,
+    						  () -> joystick.getRawAxis(0),
+    						  () -> joystick.getRawAxis(1),
+    						  () -> joystick.getRawAxis(3),
+    						  () -> joystick.getRawAxis(4),
+    						  () -> joystick.getRawAxis(2),
+    						  () -> joystick.getRawAxis(2),
+    						  () -> joystick.getRawButton(4),
+    						  () -> joystick.getRawButton(5),
+    						  () -> joystick.getRawButton(0),
+    						  () -> joystick.getRawButton(1),
+    						  () -> joystick.getRawButton(2),
+    						  () -> joystick.getRawButton(3),
+    						  () -> joystick.getRawButton(7),
+    						  () -> joystick.getRawButton(6),
+    						  () -> joystick.getRawButton(8),
+    						  () -> joystick.getRawButton(9));
+    }
 }
