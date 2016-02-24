@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
+import java.util.concurrent.TimeUnit;
+
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.Motor;
@@ -30,7 +32,7 @@ public class Robot extends IterativeRobot {
 	private static final int RF_MOTOR_PORT = 3;
 	private static final int RR_MOTOR_PORT = 2;
 	private static final int LEFT_BALL_SUCK = 4;
-	private static final int RIGHT_BALL_SUCK = 4;
+	private static final int RIGHT_BALL_SUCK = 5;
 	/*
 	private static final int LEFT_ENCOODER_PORT_A = 0;
 	private static final int LEFT_ENCOODER_PORT_B = 1;
@@ -60,19 +62,19 @@ public class Robot extends IterativeRobot {
     	//Setup drivetrain
     	Motor leftDriveMotor = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
     											Hardware.Motors.talon(LR_MOTOR_PORT)).invert();
-    	LiveWindow.addActuator("Left Front Motor", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LF_MOTOR_PORT));
-    	LiveWindow.addActuator("Left Rear Motor", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(LR_MOTOR_PORT));
+    	//LiveWindow.addActuator("Left Front Motor", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LF_MOTOR_PORT));
+    	//LiveWindow.addActuator("Left Rear Motor", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(LR_MOTOR_PORT));
     	Motor rightDriveMotor = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
     											Hardware.Motors.talon(RR_MOTOR_PORT));
-    	LiveWindow.addActuator("Right Front Motor", RF_MOTOR_PORT, (Talon) Hardware.Motors.talon(RF_MOTOR_PORT));
-    	LiveWindow.addActuator("Right Rear Motor", RR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RR_MOTOR_PORT));
+    	//LiveWindow.addActuator("Right Front Motor", RF_MOTOR_PORT, (Talon) Hardware.Motors.talon(RF_MOTOR_PORT));
+    	//LiveWindow.addActuator("Right Rear Motor", RR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RR_MOTOR_PORT));
     	drivetrain = new TankDrive(leftDriveMotor, rightDriveMotor);
     	
     	//Setup manipulators
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
-    	LiveWindow.addActuator("Left Ball Suck", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LEFT_BALL_SUCK));
-     	LiveWindow.addActuator("Right Ball Suck", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RIGHT_BALL_SUCK));
+    	//LiveWindow.addActuator("Left Ball Suck", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LEFT_BALL_SUCK));
+     	//LiveWindow.addActuator("Right Ball Suck", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RIGHT_BALL_SUCK));
 
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
@@ -93,7 +95,7 @@ public class Robot extends IterativeRobot {
     	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
     	
     	//Setup drivetrain variables
-    	ContinuousRange sensitivity = leftDriveStick.getThrottle().map(t -> (t + 1.0) / 2.0);
+    	ContinuousRange sensitivity = leftDriveStick.getAxis(2).map(t -> (t + 1.0) / 2.0);
     	leftSpeed = leftDriveStick.getPitch().scale(sensitivity::read);
     	rightSpeed = rightDriveStick.getPitch().scale(sensitivity::read);
     	
@@ -107,7 +109,7 @@ public class Robot extends IterativeRobot {
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
     	
-    	Strongback.configure().recordNoEvents().recordNoData().initialize();
+    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(50, TimeUnit.MILLISECONDS).initialize();
     }
 
     public void autonomousInit() {
