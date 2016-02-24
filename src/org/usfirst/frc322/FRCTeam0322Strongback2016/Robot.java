@@ -109,7 +109,7 @@ public class Robot extends IterativeRobot {
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
     	
-    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(50, TimeUnit.MILLISECONDS).initialize();
+    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(100, TimeUnit.MILLISECONDS).initialize();
     }
 
     public void autonomousInit() {
