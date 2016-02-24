@@ -6,6 +6,6 @@
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Strongback"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/FRCTeam0322JavaCBR2016"/>
+	<classpathentry exported="true" kind="src" path="/FRCTeam0322JavaCBR2016"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

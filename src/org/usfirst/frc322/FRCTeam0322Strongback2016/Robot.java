@@ -95,7 +95,7 @@ public class Robot extends IterativeRobot {
     	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
     	
     	//Setup drivetrain variables
-    	ContinuousRange sensitivity = leftDriveStick.getAxis(2).map(t -> (t + 1.0) / 2.0);
+    	ContinuousRange sensitivity = leftDriveStick.getAxis(2).invert().map(t -> (t + 1.0) / 2.0);
     	leftSpeed = leftDriveStick.getPitch().scale(sensitivity::read);
     	rightSpeed = rightDriveStick.getPitch().scale(sensitivity::read);
     	
