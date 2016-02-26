@@ -33,6 +33,8 @@ public class Robot extends IterativeRobot {
 	private static final int RR_MOTOR_PORT = 2;
 	private static final int LEFT_BALL_SUCK = 4;
 	private static final int RIGHT_BALL_SUCK = 5;
+	private static final int LEFT_BALL_SHOOT = 6;
+	private static final int RIGHT_BALL_SHOOT = 7;
 	/*
 	private static final int LEFT_ENCOODER_PORT_A = 0;
 	private static final int LEFT_ENCOODER_PORT_B = 1;
@@ -46,11 +48,12 @@ public class Robot extends IterativeRobot {
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
-	private Motor ballSuckMotor;
+	private Motor ballSuckMotor, ballShootMotor;
 	
 	private TankDrive drivetrain;
 	private ContinuousRange leftSpeed, rightSpeed;
 	private SwitchReactor ballSuck, ballSpit, stopCollector;
+	private SwitchReactor shootBall, shooterReverse, stopShooter;
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
@@ -73,8 +76,12 @@ public class Robot extends IterativeRobot {
     	//Setup manipulators
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
-    	//LiveWindow.addActuator("Left Ball Suck", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LEFT_BALL_SUCK));
-     	//LiveWindow.addActuator("Right Ball Suck", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RIGHT_BALL_SUCK));
+    	//LiveWindow.addActuator("Left Ball Suck", LEFT_BALL_SUCK, (Talon) Hardware.Motors.talon(LEFT_BALL_SUCK));
+     	//LiveWindow.addActuator("Right Ball Suck", RIGHT_BALL_SUCK, (Talon) Hardware.Motors.talon(RIGHT_BALL_SUCK));
+    	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
+    									Hardware.Motors.talon(RIGHT_BALL_SHOOT).invert());
+    	//LiveWindow.addActuator("Left Ball Shoot", LEFT_BALL_SHOOT, (Talon) Hardware.Motors.talon(LEFT_BALL_SHOOT));
+     	//LiveWindow.addActuator("Right Ball Shoot", RIGHT_BALL_SHOOT, (Talon) Hardware.Motors.talon(RIGHT_BALL_SHOOT));
 
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
@@ -99,10 +106,14 @@ public class Robot extends IterativeRobot {
     	leftSpeed = leftDriveStick.getPitch().scale(sensitivity::read);
     	rightSpeed = rightDriveStick.getPitch().scale(sensitivity::read);
     	
-    	//Setup OI Buttons
+    	//Setup Switches
     	ballSuck = Strongback.switchReactor();
     	ballSpit = Strongback.switchReactor();
     	stopCollector = Strongback.switchReactor();
+    	
+    	shootBall = Strongback.switchReactor();
+    	shooterReverse = Strongback.switchReactor();
+    	stopShooter = Strongback.switchReactor();
     	
     	//Setup Camera
     	cameraServer = CameraServer.getInstance();
@@ -130,6 +141,7 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	//This line runs the drivetrain
     	drivetrain.tank(leftSpeed.read(), rightSpeed.read());
+    	
     	//These two handle boulder pickup
     	ballSuck.whileTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SuckBall(ballSuckMotor)));
     	ballSuck.whileUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
@@ -138,6 +150,15 @@ public class Robot extends IterativeRobot {
     	ballSuck.whileUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
     	//This one stops the collector
     	stopCollector.whileTriggered(manipulatorStick.getLeftBumper(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
+
+    	//These two lines handle boulder shooting
+    	shootBall.whileTriggered(manipulatorStick.getX(), ()->Strongback.submit(new ShootBall(ballShootMotor)));
+    	shootBall.whileUntriggered(manipulatorStick.getX(), ()->Strongback.submit(new StopCollector(ballShootMotor)));
+    	//These two reverse the shooter
+    	shooterReverse.whileTriggered(manipulatorStick.getY(), ()->Strongback.submit(new ReverseShooter(ballShootMotor)));
+    	shooterReverse.whileUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopCollector(ballShootMotor)));
+    	//This line stops the shooter
+    	stopShooter.whileTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
     }
 
     public void disabledInit() {
