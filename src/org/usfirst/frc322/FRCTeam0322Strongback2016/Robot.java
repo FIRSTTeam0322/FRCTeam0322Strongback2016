@@ -159,6 +159,18 @@ public class Robot extends IterativeRobot {
     	shooterReverse.whileUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopCollector(ballShootMotor)));
     	//This line stops the shooter
     	stopShooter.whileTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
+    	
+    	//This section is used for testing only.
+    	System.out.println("Axis 0" + manipulatorStick.getAxis(0));
+    	System.out.println("Axis 1" + manipulatorStick.getAxis(1));
+    	System.out.println("Axis 2" + manipulatorStick.getAxis(2));
+    	System.out.println("Axis 3" + manipulatorStick.getAxis(3));
+    	System.out.println("Axis 4" + manipulatorStick.getAxis(4));
+    	System.out.println("Axis 5" + manipulatorStick.getAxis(5));
+    	System.out.println("Left Trigger" + manipulatorStick.getLeftTrigger());
+    	System.out.println("Right Trigger" + manipulatorStick.getRightTrigger());
+    	System.out.println("Left Bumper" + manipulatorStick.getLeftBumper());
+    	System.out.println("Right Bumper" + manipulatorStick.getRightBumper());
     }
 
     public void disabledInit() {
