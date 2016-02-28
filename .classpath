@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/usfirst/frc322/FRCTeam0322Strongback2016/Xbox360.java" kind="src" path="src"/>
 	<classpathentry kind="src" output="build/test-classes" path="testsrc"/>
 	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
 	<classpathentry kind="var" path="networktables" sourcepath="networktables.sources"/>

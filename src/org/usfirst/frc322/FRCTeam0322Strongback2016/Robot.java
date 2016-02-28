@@ -4,6 +4,7 @@ package org.usfirst.frc322.FRCTeam0322Strongback2016;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -86,8 +87,7 @@ public class Robot extends IterativeRobot {
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
     	rightDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_DRIVESTICK_PORT);
-    	//This is actually an Xbox 360 controller but, the F310 is close enough
-    	manipulatorStick = Hardware.HumanInterfaceDevices.logitechF310(MANIPULATOR_STICK_PORT);
+    	manipulatorStick = xbox360(MANIPULATOR_STICK_PORT);
     	
     	//Setup sensors
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
@@ -120,7 +120,7 @@ public class Robot extends IterativeRobot {
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
     	
-    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(100, TimeUnit.MILLISECONDS).initialize();
+    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(50, TimeUnit.MILLISECONDS).initialize();
     }
 
     public void autonomousInit() {
@@ -142,40 +142,72 @@ public class Robot extends IterativeRobot {
     	//This line runs the drivetrain
     	drivetrain.tank(leftSpeed.read(), rightSpeed.read());
     	
-    	//These two handle boulder pickup
+    	//This line handles boulder pickup
     	ballSuck.whileTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SuckBall(ballSuckMotor)));
-    	ballSuck.whileUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
-    	//These two handle boulder release
-    	ballSpit.whileTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SpitBall(ballSuckMotor)));
-    	ballSuck.whileUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
+    	//This line handles boulder release
+    	ballSpit.whileTriggered(manipulatorStick.getB(), ()->Strongback.submit(new SpitBall(ballSuckMotor)));
     	//This one stops the collector
     	stopCollector.whileTriggered(manipulatorStick.getLeftBumper(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
 
-    	//These two lines handle boulder shooting
+    	//This line handles boulder shooting
     	shootBall.whileTriggered(manipulatorStick.getX(), ()->Strongback.submit(new ShootBall(ballShootMotor)));
-    	shootBall.whileUntriggered(manipulatorStick.getX(), ()->Strongback.submit(new StopCollector(ballShootMotor)));
-    	//These two reverse the shooter
+    	//This line reverses the shooter
     	shooterReverse.whileTriggered(manipulatorStick.getY(), ()->Strongback.submit(new ReverseShooter(ballShootMotor)));
-    	shooterReverse.whileUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopCollector(ballShootMotor)));
-    	//This line stops the shooter
+    	//This one stops the shooter
     	stopShooter.whileTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
-    	
-    	//This section is used for testing only.
-    	System.out.println("Axis 0" + manipulatorStick.getAxis(0));
-    	System.out.println("Axis 1" + manipulatorStick.getAxis(1));
-    	System.out.println("Axis 2" + manipulatorStick.getAxis(2));
-    	System.out.println("Axis 3" + manipulatorStick.getAxis(3));
-    	System.out.println("Axis 4" + manipulatorStick.getAxis(4));
-    	System.out.println("Axis 5" + manipulatorStick.getAxis(5));
-    	System.out.println("Left Trigger" + manipulatorStick.getLeftTrigger());
-    	System.out.println("Right Trigger" + manipulatorStick.getRightTrigger());
-    	System.out.println("Left Bumper" + manipulatorStick.getLeftBumper());
-    	System.out.println("Right Bumper" + manipulatorStick.getRightBumper());
     }
 
     public void disabledInit() {
     	drivetrain.stop();
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
-    }    
+    }
+    
+    public void disabledPeriodic() {
+    	//This section is used for testing only.
+    	/*System.out.println("Axis 0 " + manipulatorStick.getAxis(0).read());
+    	System.out.println("Axis 1 " + manipulatorStick.getAxis(1).read());
+    	System.out.println("Axis 2 " + manipulatorStick.getAxis(2).read());
+    	System.out.println("Axis 3 " + manipulatorStick.getAxis(3).read());
+    	System.out.println("Axis 4 " + manipulatorStick.getAxis(4).read());
+    	System.out.println("Axis 5 " + manipulatorStick.getAxis(5).read());
+    	System.out.println("A " + manipulatorStick.getA().isTriggered());
+    	System.out.println("B " + manipulatorStick.getB().isTriggered());
+    	System.out.println("X " + manipulatorStick.getX().isTriggered());
+    	System.out.println("Y " + manipulatorStick.getY().isTriggered());
+    	System.out.println("Left Bumper " + manipulatorStick.getLeftBumper().isTriggered());
+    	System.out.println("Right Bumper " + manipulatorStick.getRightBumper().isTriggered());
+    	System.out.println("Start " + manipulatorStick.getStart().isTriggered());
+    	System.out.println("Select " + manipulatorStick.getSelect().isTriggered());
+    	System.out.println("Left Trigger " + manipulatorStick.getLeftTrigger().read());
+    	System.out.println("Right Trigger " + manipulatorStick.getRightTrigger().read());*/
+    }
+    /**
+     * Create a Microsoft Xbox360 gamepad controlled by the Driver Station.
+     *
+     * @param port the port on the driver station that the gamepad is plugged into
+     * @return the input device; never null
+     */
+    public static Gamepad xbox360(int port) {
+        Joystick joystick = new Joystick(port);
+        return Gamepad.create(joystick::getRawAxis,
+                              joystick::getRawButton,
+                              joystick::getPOV,
+                              () -> joystick.getRawAxis(0),
+                              () -> joystick.getRawAxis(1) * -1,
+                              () -> joystick.getRawAxis(4),
+                              () -> joystick.getRawAxis(5) * -1,
+                              () -> joystick.getRawAxis(2),
+                              () -> joystick.getRawAxis(3),
+                              () -> joystick.getRawButton(5),
+                              () -> joystick.getRawButton(6),
+                              () -> joystick.getRawButton(1),
+                              () -> joystick.getRawButton(2),
+                              () -> joystick.getRawButton(3),
+                              () -> joystick.getRawButton(4),
+                              () -> joystick.getRawButton(8),
+                              () -> joystick.getRawButton(7),
+                              () -> joystick.getRawButton(9),
+                              () -> joystick.getRawButton(10));
+    }
 }
