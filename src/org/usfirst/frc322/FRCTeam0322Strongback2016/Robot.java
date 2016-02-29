@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
     	rightDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_DRIVESTICK_PORT);
-    	manipulatorStick = xbox360(MANIPULATOR_STICK_PORT);
+    	manipulatorStick = Hardware.xbox360(MANIPULATOR_STICK_PORT);
     	
     	//Setup sensors
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
@@ -141,20 +141,24 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	//This line runs the drivetrain
     	drivetrain.tank(leftSpeed.read(), rightSpeed.read());
-    	
-    	//This line handles boulder pickup
-    	ballSuck.whileTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SuckBall(ballSuckMotor)));
-    	//This line handles boulder release
-    	ballSpit.whileTriggered(manipulatorStick.getB(), ()->Strongback.submit(new SpitBall(ballSuckMotor)));
-    	//This one stops the collector
-    	stopCollector.whileTriggered(manipulatorStick.getLeftBumper(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
 
-    	//This line handles boulder shooting
-    	shootBall.whileTriggered(manipulatorStick.getX(), ()->Strongback.submit(new ShootBall(ballShootMotor)));
-    	//This line reverses the shooter
-    	shooterReverse.whileTriggered(manipulatorStick.getY(), ()->Strongback.submit(new ReverseShooter(ballShootMotor)));
-    	//This one stops the shooter
-    	stopShooter.whileTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
+    	//This section handles the collector
+    	ballSuck.onTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SuckBall(ballSuckMotor)));
+    	ballSuck.onUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
+
+    	ballSpit.onTriggered(manipulatorStick.getB(), ()->Strongback.submit(new SpitBall(ballSuckMotor)));
+    	ballSpit.onUntriggered(manipulatorStick.getB(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
+    	
+    	stopCollector.onTriggered(manipulatorStick.getLeftBumper(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
+
+    	//This secton handles the shooter
+    	shootBall.onTriggered(manipulatorStick.getX(), ()->Strongback.submit(new ShootBall(ballShootMotor)));
+    	shootBall.onUntriggered(manipulatorStick.getX(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
+    	
+    	shooterReverse.onTriggered(manipulatorStick.getY(), ()->Strongback.submit(new ReverseShooter(ballShootMotor)));
+    	shooterReverse.onUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
+
+    	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
     }
 
     public void disabledInit() {
@@ -165,7 +169,8 @@ public class Robot extends IterativeRobot {
     
     public void disabledPeriodic() {
     	//This section is used for testing only.
-    	/*System.out.println("Axis 0 " + manipulatorStick.getAxis(0).read());
+    	/*
+    	System.out.println("Axis 0 " + manipulatorStick.getAxis(0).read());
     	System.out.println("Axis 1 " + manipulatorStick.getAxis(1).read());
     	System.out.println("Axis 2 " + manipulatorStick.getAxis(2).read());
     	System.out.println("Axis 3 " + manipulatorStick.getAxis(3).read());
@@ -180,34 +185,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Start " + manipulatorStick.getStart().isTriggered());
     	System.out.println("Select " + manipulatorStick.getSelect().isTriggered());
     	System.out.println("Left Trigger " + manipulatorStick.getLeftTrigger().read());
-    	System.out.println("Right Trigger " + manipulatorStick.getRightTrigger().read());*/
-    }
-    /**
-     * Create a Microsoft Xbox360 gamepad controlled by the Driver Station.
-     *
-     * @param port the port on the driver station that the gamepad is plugged into
-     * @return the input device; never null
-     */
-    public static Gamepad xbox360(int port) {
-        Joystick joystick = new Joystick(port);
-        return Gamepad.create(joystick::getRawAxis,
-                              joystick::getRawButton,
-                              joystick::getPOV,
-                              () -> joystick.getRawAxis(0),
-                              () -> joystick.getRawAxis(1) * -1,
-                              () -> joystick.getRawAxis(4),
-                              () -> joystick.getRawAxis(5) * -1,
-                              () -> joystick.getRawAxis(2),
-                              () -> joystick.getRawAxis(3),
-                              () -> joystick.getRawButton(5),
-                              () -> joystick.getRawButton(6),
-                              () -> joystick.getRawButton(1),
-                              () -> joystick.getRawButton(2),
-                              () -> joystick.getRawButton(3),
-                              () -> joystick.getRawButton(4),
-                              () -> joystick.getRawButton(8),
-                              () -> joystick.getRawButton(7),
-                              () -> joystick.getRawButton(9),
-                              () -> joystick.getRawButton(10));
+    	System.out.println("Right Trigger " + manipulatorStick.getRightTrigger().read());
+    	*/
     }
 }
