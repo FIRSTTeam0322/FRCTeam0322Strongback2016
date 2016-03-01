@@ -2,13 +2,9 @@
 package org.usfirst.frc322.FRCTeam0322Strongback2016;
 
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -159,6 +155,13 @@ public class Robot extends IterativeRobot {
     	shooterReverse.onUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
 
     	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
+    	
+    	System.out.println("Gyro Angle " + gyro.getAngle());
+    	System.out.println();
+    	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
+    	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
+    	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
+    	System.out.println();
     }
 
     public void disabledInit() {
