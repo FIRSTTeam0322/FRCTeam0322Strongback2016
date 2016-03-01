@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
     	rightDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_DRIVESTICK_PORT);
-    	manipulatorStick = Hardware.xbox360(MANIPULATOR_STICK_PORT);
+    	manipulatorStick = Hardware.HumanInterfaceDevices.xbox360(MANIPULATOR_STICK_PORT);
     	
     	//Setup sensors
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
