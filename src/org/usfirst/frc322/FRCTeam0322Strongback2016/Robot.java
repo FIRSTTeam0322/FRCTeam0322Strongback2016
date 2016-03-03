@@ -61,7 +61,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	//Setup drivetrain
     	Motor leftDriveMotor = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
-    											Hardware.Motors.talon(LR_MOTOR_PORT)).invert();
+    											Hardware.Motors.talon(LR_MOTOR_PORT));
     	//LiveWindow.addActuator("Left Front Motor", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LF_MOTOR_PORT));
     	//LiveWindow.addActuator("Left Rear Motor", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(LR_MOTOR_PORT));
     	Motor rightDriveMotor = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
