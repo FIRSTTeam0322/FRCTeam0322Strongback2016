@@ -32,13 +32,13 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_BALL_SUCK = 5;
 	private static final int LEFT_BALL_SHOOT = 6;
 	private static final int RIGHT_BALL_SHOOT = 7;
-	/*
+	
 	private static final int LEFT_ENCOODER_PORT_A = 0;
 	private static final int LEFT_ENCOODER_PORT_B = 1;
 	private static final int RIGHT_ENCOODER_PORT_A = 2;
 	private static final int RIGHT_ENCOODER_PORT_B = 3;
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
-	*/
+	
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
@@ -54,7 +54,7 @@ public class Robot extends IterativeRobot {
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
-	//private AngleSensor leftEncoder, rightEncoder;
+	private AngleSensor leftEncoder, rightEncoder;
 	
 	public static CameraServer cameraServer;	
 	
@@ -90,10 +90,8 @@ public class Robot extends IterativeRobot {
     	//LiveWindow.addSensor("Accelerometer", 1, accel); //I have no idea how to add the Strongback Accelerometer to a LiveWindow
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
     	//LiveWindow.addSensor("Gyroscope", 0, gyro); //I have no idea how to add the Strongback Gyroscope to a LiveWindow
-
-    	//We weren't able to attach the encoder hardware properly so, I'm pulling them from the code until we figure it out
-    	//leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
-    	//rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
+    	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
+    	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
     	//LiveWindow.addSensor("Left Encoder", LEFT_ENCOODER_PORT_A, leftEncoder);
     	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
     	
@@ -161,6 +159,10 @@ public class Robot extends IterativeRobot {
     	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
+    	System.out.println();
+    	System.out.println("Left Distance " + leftEncoder.getAngle());
+    	System.out.println("Right Distance " + rightEncoder.getAngle());
+    	System.out.println();
     	System.out.println();
     }
 
