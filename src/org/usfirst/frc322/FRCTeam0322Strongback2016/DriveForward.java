@@ -5,14 +5,16 @@ import org.strongback.drive.TankDrive;
 
 public class DriveForward extends Command {
 	private final TankDrive drivetrain;
+	private static final double SPEED;
 	
 	public DriveForward(TankDrive drivetrain) {
 		super(drivetrain);
 		this.drivetrain = drivetrain;
+		SPEED = 0.75;
 	}
 	
 	public boolean execute() {
-		this.drivetrain.tank(0.75, 0.75);
+		this.drivetrain.tank(-SPEED, -SPEED);
 		return true;
 	}
 }
