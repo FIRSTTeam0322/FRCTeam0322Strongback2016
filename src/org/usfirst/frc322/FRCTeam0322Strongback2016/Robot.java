@@ -124,7 +124,7 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void autonomousPeriodic() {
-    	
+    	Strongback.submit(new DriveForward(drivetrain));
     }
     
     public void teleopInit() {
