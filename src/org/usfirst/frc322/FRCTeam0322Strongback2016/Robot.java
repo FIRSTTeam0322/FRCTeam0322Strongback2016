@@ -39,6 +39,8 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_ENCOODER_PORT_B = 3;
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
 	
+	private static final double AUTON_SPEED = 0.55;
+	
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
@@ -123,7 +125,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
-    	Strongback.submit(new DriveForward(drivetrain));
+    	Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
     }
     
     public void teleopInit() {
