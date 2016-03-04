@@ -122,7 +122,6 @@ public class Robot extends IterativeRobot {
         Strongback.start();
     }
     
-    @Override
     public void autonomousPeriodic() {
     	Strongback.submit(new DriveForward(drivetrain));
     }
