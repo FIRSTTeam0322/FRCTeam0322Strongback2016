@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 	
 	private static final int AUTON_MODE = 2;
 	private static final double AUTON_SPEED = 0.55;
-	private static final int AUTON_DISTANCE = 20000;
+	private static final double AUTON_DISTANCE = 20000.0;
 	
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
@@ -134,13 +134,13 @@ public class Robot extends IterativeRobot {
     	case 0: Strongback.submit(new DoNothing());
     		break;
     	case 1:
-    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE &&
+    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
     					Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
     		}
     		break;
     	case 2:
-    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE &&
+    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
         				Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
         			}
