@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 import java.util.concurrent.TimeUnit;
+import java.lang.Math;
 
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
@@ -39,7 +40,9 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_ENCOODER_PORT_B = 3;
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
 	
+	private static final int AUTON_MODE = 2;
 	private static final double AUTON_SPEED = 0.55;
+	private static final int AUTON_DISTANCE = 20000;
 	
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
@@ -127,7 +130,26 @@ public class Robot extends IterativeRobot {
     }
     
     public void autonomousPeriodic() {
-    	Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+    	switch(AUTON_MODE) {
+    	case 0: Strongback.submit(new DoNothing());
+    		break;
+    	case 1:
+    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE &&
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
+    					Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
+    		}
+    		break;
+    	case 2:
+    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE &&
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
+        				Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+        			}
+    		break;
+    	default:
+    		Strongback.submit(new DoNothing());
+    		break;
+    	}
+    	
     	/*System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
     	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
