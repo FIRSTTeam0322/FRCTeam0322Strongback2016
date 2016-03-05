@@ -126,6 +126,16 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+    	/*System.out.println("Gyro Angle " + gyro.getAngle());
+    	System.out.println();
+    	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
+    	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
+    	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());*/
+    	System.out.println();
+    	System.out.println("Left Distance " + leftEncoder.getAngle());
+    	System.out.println("Right Distance " + rightEncoder.getAngle());
+    	System.out.println();
+    	System.out.println();
     }
     
     public void teleopInit() {
