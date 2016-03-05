@@ -56,7 +56,8 @@ public class Robot extends IterativeRobot {
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
-	private AngleSensor leftEncoder, rightEncoder;
+	private AngleSensor leftEncoder, leftEncoderAdjusted;
+	private AngleSensor rightEncoder;
 	
 	public static CameraServer cameraServer;	
 	
@@ -93,7 +94,8 @@ public class Robot extends IterativeRobot {
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
     	//LiveWindow.addSensor("Gyroscope", 0, gyro); //I have no idea how to add the Strongback Gyroscope to a LiveWindow
     	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
-    	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);    	
+    	leftEncoderAdjusted = AngleSensor.invert(leftEncoder);
+    	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
     	//LiveWindow.addSensor("Left Encoder", LEFT_ENCOODER_PORT_A, leftEncoder);
     	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
     	
@@ -132,7 +134,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());*/
     	System.out.println();
-    	System.out.println("Left Distance " + leftEncoder.getAngle());
+    	System.out.println("Left Distance " + leftEncoderAdjusted.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
     	System.out.println();
@@ -171,7 +173,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Left Distance " + leftEncoder.getAngle());
+    	System.out.println("Left Distance " + leftEncoderAdjusted.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
     	System.out.println();
