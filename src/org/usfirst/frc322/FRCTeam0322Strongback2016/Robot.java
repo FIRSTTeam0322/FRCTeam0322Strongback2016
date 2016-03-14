@@ -1,24 +1,21 @@
 /* Created Sat Jan 23 12:56:39 EST 2016 */
 package org.usfirst.frc322.FRCTeam0322Strongback2016;
 
+import org.strongback.Strongback;
+import org.strongback.SwitchReactor;
+import org.strongback.components.AngleSensor;
+import org.strongback.components.Motor;
+import org.strongback.components.ThreeAxisAccelerometer;
+import org.strongback.components.ui.ContinuousRange;
+import org.strongback.components.ui.FlightStick;
+import org.strongback.components.ui.Gamepad;
+import org.strongback.drive.TankDrive;
+import org.strongback.hardware.Hardware;
+
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
-
-import java.util.concurrent.TimeUnit;
-import java.lang.Math;
-
-import org.strongback.Strongback;
-import org.strongback.SwitchReactor;
-import org.strongback.components.Motor;
-import org.strongback.components.ui.ContinuousRange;
-import org.strongback.components.ui.FlightStick;
-import org.strongback.components.ui.Gamepad;
-import org.strongback.components.ThreeAxisAccelerometer;
-import org.strongback.components.AngleSensor;
-import org.strongback.drive.TankDrive;
-import org.strongback.hardware.Hardware;
 
 public class Robot extends IterativeRobot {
 
