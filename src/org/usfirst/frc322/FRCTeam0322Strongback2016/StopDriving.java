@@ -3,14 +3,14 @@ package org.usfirst.frc322.FRCTeam0322Strongback2016;
 import org.strongback.command.*;
 import org.strongback.drive.TankDrive;
 
-public class DriveBackward extends Command {
+public class StopDriving extends Command {
 	private final TankDrive drivetrain;
 	private final double speed;
 	
-	public DriveBackward(TankDrive drivetrain, double speed) {
+	public StopDriving(TankDrive drivetrain) {
 		super(drivetrain);
 		this.drivetrain = drivetrain;
-		this.speed = speed;
+		this.speed = 0.0;
 	}
 	
 	@Override

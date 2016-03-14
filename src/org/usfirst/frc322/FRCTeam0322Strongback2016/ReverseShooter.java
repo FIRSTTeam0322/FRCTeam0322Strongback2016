@@ -11,6 +11,7 @@ public class ReverseShooter extends Command {
 		this.motor = motor;
 	}
 	
+	@Override
 	public boolean execute() {
 		this.motor.setSpeed(-1.0);
 		return true;

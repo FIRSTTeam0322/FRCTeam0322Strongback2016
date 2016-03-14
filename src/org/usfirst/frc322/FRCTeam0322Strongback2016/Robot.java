@@ -40,7 +40,7 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_ENCOODER_PORT_B = 3;
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
 	
-	private static final int AUTON_MODE = 2;
+	private static final int AUTON_MODE = 4;
 	private static final double AUTON_SPEED = 0.55;
 	private static final double AUTON_DISTANCE = 20000.0;
 	
@@ -64,6 +64,7 @@ public class Robot extends IterativeRobot {
 	
 	public static CameraServer cameraServer;	
 	
+	@Override
     public void robotInit() {
     	//Setup drivetrain
     	Motor leftDriveMotor = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
@@ -121,14 +122,16 @@ public class Robot extends IterativeRobot {
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
     	
-    	Strongback.configure().recordNoEvents().recordNoData().useExecutionPeriod(50, TimeUnit.MILLISECONDS).initialize();
+    	Strongback.configure().recordNoEvents().recordNoData().initialize();
     }
 
+	@Override
     public void autonomousInit() {
         // Start Strongback functions ...
         Strongback.start();
     }
     
+	@Override
     public void autonomousPeriodic() {
     	switch(AUTON_MODE) {
     	case 0: Strongback.submit(new DoNothing());
@@ -136,14 +139,20 @@ public class Robot extends IterativeRobot {
     	case 1:
     		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
-    					Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
+    			Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
     		}
     		break;
     	case 2:
     		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
-        				Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
-        			}
+        		Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+        	}
+    		break;
+    	case 3:
+    		Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
+    		break;
+    	case 4:
+    		Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
     		break;
     	default:
     		Strongback.submit(new DoNothing());
@@ -162,11 +171,13 @@ public class Robot extends IterativeRobot {
     	System.out.println();
     }
     
+	@Override
     public void teleopInit() {
         // Restart Strongback functions ...
         Strongback.restart();
     }
-
+	
+	@Override
     public void teleopPeriodic() {
     	//This line runs the drivetrain
     	drivetrain.tank(leftSpeed.read(), rightSpeed.read());
@@ -201,12 +212,14 @@ public class Robot extends IterativeRobot {
     	System.out.println();
     }
 
+	@Override
     public void disabledInit() {
     	drivetrain.stop();
         // Tell Strongback that the robot is disabled so it can flush and kill commands.
         Strongback.disable();
     }
     
+	@Override
     public void disabledPeriodic() {
     	//This section is used for testing only.
     	/*

@@ -11,6 +11,7 @@ public class StopShooter extends Command {
 		this.motor = motor;
 	}
 	
+	@Override
 	public boolean execute() {
 		this.motor.setSpeed(0.0);
 		return true;
