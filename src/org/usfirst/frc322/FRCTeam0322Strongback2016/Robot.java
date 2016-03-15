@@ -225,5 +225,6 @@ public class Robot extends IterativeRobot {
     
 	@Override
     public void disabledPeriodic() {
+		// This section is only used when testing without wanting the robot to react
     }
 }
