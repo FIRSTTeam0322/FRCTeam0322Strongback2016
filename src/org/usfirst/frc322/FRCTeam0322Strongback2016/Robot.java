@@ -4,13 +4,16 @@ package org.usfirst.frc322.FRCTeam0322Strongback2016;
 import org.strongback.Strongback;
 import org.strongback.SwitchReactor;
 import org.strongback.components.AngleSensor;
+import org.strongback.components.CurrentSensor;
 import org.strongback.components.Motor;
 import org.strongback.components.ThreeAxisAccelerometer;
+import org.strongback.components.VoltageSensor;
 import org.strongback.components.ui.ContinuousRange;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.components.ui.Gamepad;
 import org.strongback.drive.TankDrive;
 import org.strongback.hardware.Hardware;
+import org.strongback.DataRecorder;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -56,7 +59,7 @@ public class Robot extends IterativeRobot {
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
-	private AngleSensor leftEncoder, leftEncoderAdjusted;
+	private AngleSensor leftEncoder, leftEncoderRaw;
 	private AngleSensor rightEncoder;
 	
 	public static CameraServer cameraServer;	
@@ -64,25 +67,17 @@ public class Robot extends IterativeRobot {
 	@Override
     public void robotInit() {
     	//Setup drivetrain
-    	Motor leftDriveMotor = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
+    	Motor leftDriveMotors = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT),
     											Hardware.Motors.talon(LR_MOTOR_PORT));
-    	//LiveWindow.addActuator("Left Front Motor", LF_MOTOR_PORT, (Talon) Hardware.Motors.talon(LF_MOTOR_PORT));
-    	//LiveWindow.addActuator("Left Rear Motor", LR_MOTOR_PORT, (Talon) Hardware.Motors.talon(LR_MOTOR_PORT));
-    	Motor rightDriveMotor = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
+    	Motor rightDriveMotors = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
     											Hardware.Motors.talon(RR_MOTOR_PORT));
-    	//LiveWindow.addActuator("Right Front Motor", RF_MOTOR_PORT, (Talon) Hardware.Motors.talon(RF_MOTOR_PORT));
-    	//LiveWindow.addActuator("Right Rear Motor", RR_MOTOR_PORT, (Talon) Hardware.Motors.talon(RR_MOTOR_PORT));
-    	drivetrain = new TankDrive(leftDriveMotor, rightDriveMotor);
+    	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors);
     	
     	//Setup manipulators
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
-    	//LiveWindow.addActuator("Left Ball Suck", LEFT_BALL_SUCK, (Talon) Hardware.Motors.talon(LEFT_BALL_SUCK));
-     	//LiveWindow.addActuator("Right Ball Suck", RIGHT_BALL_SUCK, (Talon) Hardware.Motors.talon(RIGHT_BALL_SUCK));
     	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
     									Hardware.Motors.talon(RIGHT_BALL_SHOOT).invert());
-    	//LiveWindow.addActuator("Left Ball Shoot", LEFT_BALL_SHOOT, (Talon) Hardware.Motors.talon(LEFT_BALL_SHOOT));
-     	//LiveWindow.addActuator("Right Ball Shoot", RIGHT_BALL_SHOOT, (Talon) Hardware.Motors.talon(RIGHT_BALL_SHOOT));
 
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
@@ -91,14 +86,12 @@ public class Robot extends IterativeRobot {
     	
     	//Setup sensors
     	accel = Hardware.Accelerometers.accelerometer(ACCEL_PORT, ACCEL_RANGE);
-    	//LiveWindow.addSensor("Accelerometer", 1, accel); //I have no idea how to add the Strongback Accelerometer to a LiveWindow
     	gyro = Hardware.AngleSensors.gyroscope(GYRO_PORT);
-    	//LiveWindow.addSensor("Gyroscope", 0, gyro); //I have no idea how to add the Strongback Gyroscope to a LiveWindow
-    	leftEncoder = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
-    	leftEncoderAdjusted = AngleSensor.invert(leftEncoder);
+    	leftEncoderRaw = Hardware.AngleSensors.encoder(LEFT_ENCOODER_PORT_A, LEFT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
+    	leftEncoder = AngleSensor.invert(leftEncoderRaw);
     	rightEncoder = Hardware.AngleSensors.encoder(RIGHT_ENCOODER_PORT_A, RIGHT_ENCOODER_PORT_B, ENCOODER_PULSE_DISTANCE);
-    	//LiveWindow.addSensor("Left Encoder", LEFT_ENCOODER_PORT_A, leftEncoder);
-    	//LiveWindow.addSensor("Right Encoder", RIGHT_ENCOODER_PORT_A, rightEncoder);
+    	VoltageSensor battery = Hardware.powerPanel().getVoltageSensor();
+    	CurrentSensor current = Hardware.powerPanel().getTotalCurrentSensor();
     	
     	//Setup drivetrain variables
     	ContinuousRange sensitivity = leftDriveStick.getAxis(2).invert().map(t -> (t + 1.0) / 2.0);
@@ -118,8 +111,23 @@ public class Robot extends IterativeRobot {
     	cameraServer = CameraServer.getInstance();
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
+        
+        Strongback.dataRecorder()
+        			.register("Battery Volts", 1000, battery::getVoltage)
+        			.register("Current load", 1000, current::getCurrent)
+        			.register("Left Motors", leftDriveMotors)
+        			.register("Right Motors", rightDriveMotors)
+        			.register("LeftDriveStick", 1000, leftSpeed::read)
+        			.register("RightDriveStick", 1000, rightSpeed::read)
+        			.register("Drive Sensitivity", 1000, sensitivity::read)
+        			.register("Gyro", 1000, gyro::getAngle)
+        			.register("X-Accel", 1000, accel.getXDirection()::getAcceleration)
+        			.register("Y-Accel", 1000, accel.getYDirection()::getAcceleration)
+        			.register("Z-Accel", 1000, accel.getZDirection()::getAcceleration)
+        			.register("Left Encoder", 1000, leftEncoder::getAngle)
+					.register("Right Encoder", 1000, rightEncoder::getAngle);
     	
-    	Strongback.configure().recordNoEvents().recordNoData().initialize();
+    	Strongback.configure().recordNoEvents().recordDataToFile("FRCTeam0322Strongback2016-").initialize();
     }
 
 	@Override
@@ -134,13 +142,13 @@ public class Robot extends IterativeRobot {
     	case 0: Strongback.submit(new DoNothing());
     		break;
     	case 1:
-    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
+    		if (Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
     			Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
     		}
     		break;
     	case 2:
-    		if (Math.abs(leftEncoderAdjusted.getAngle()) < AUTON_DISTANCE ||
+    		if (Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
         		Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
         	}
@@ -156,13 +164,13 @@ public class Robot extends IterativeRobot {
     		break;
     	}
     	
-    	/*System.out.println("Gyro Angle " + gyro.getAngle());
+    	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
     	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
-    	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());*/
+    	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Left Distance " + leftEncoderAdjusted.getAngle());
+    	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
     	System.out.println();
@@ -203,7 +211,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Left Distance " + leftEncoderAdjusted.getAngle());
+    	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
     	System.out.println();
@@ -218,24 +226,5 @@ public class Robot extends IterativeRobot {
     
 	@Override
     public void disabledPeriodic() {
-    	//This section is used for testing only.
-    	/*
-    	System.out.println("Axis 0 " + manipulatorStick.getAxis(0).read());
-    	System.out.println("Axis 1 " + manipulatorStick.getAxis(1).read());
-    	System.out.println("Axis 2 " + manipulatorStick.getAxis(2).read());
-    	System.out.println("Axis 3 " + manipulatorStick.getAxis(3).read());
-    	System.out.println("Axis 4 " + manipulatorStick.getAxis(4).read());
-    	System.out.println("Axis 5 " + manipulatorStick.getAxis(5).read());
-    	System.out.println("A " + manipulatorStick.getA().isTriggered());
-    	System.out.println("B " + manipulatorStick.getB().isTriggered());
-    	System.out.println("X " + manipulatorStick.getX().isTriggered());
-    	System.out.println("Y " + manipulatorStick.getY().isTriggered());
-    	System.out.println("Left Bumper " + manipulatorStick.getLeftBumper().isTriggered());
-    	System.out.println("Right Bumper " + manipulatorStick.getRightBumper().isTriggered());
-    	System.out.println("Start " + manipulatorStick.getStart().isTriggered());
-    	System.out.println("Select " + manipulatorStick.getSelect().isTriggered());
-    	System.out.println("Left Trigger " + manipulatorStick.getLeftTrigger().read());
-    	System.out.println("Right Trigger " + manipulatorStick.getRightTrigger().read());
-    	*/
     }
 }
