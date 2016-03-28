@@ -51,6 +51,8 @@ public class Robot extends IterativeRobot {
 	
 	private static final int LOWER_LIFT_LIMIT = 0;
 	private static final int UPPER_LIFT_LIMIT = 1;
+	private static final int LOWER_EXTEND_LIMIT = 2;
+	private static final int UPPER_EXTEND_LIMIT = 3;
 	
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
@@ -64,16 +66,16 @@ public class Robot extends IterativeRobot {
 	
 	private TankDrive drivetrain;
 	private ContinuousRange leftSpeed, rightSpeed;
+	private ContinuousRange liftRaisePower, liftExtendPower;
 	private SwitchReactor ballSuck, ballSpit, stopCollector;
 	private SwitchReactor shootBall, shooterReverse, stopShooter;
-	private SwitchReactor raiseLift, lowerLift, extendLift, retractLift;
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
 	private AngleSensor leftEncoder, leftEncoderRaw;
 	private AngleSensor rightEncoder;
 	
-	private Switch upperLiftLimit, lowerLiftLimit;
+	private Switch upperLiftLimit, lowerLiftLimit, upperExtendLimit, lowerExtendLimit;
 	
 	public static CameraServer cameraServer;	
 	
@@ -116,9 +118,15 @@ public class Robot extends IterativeRobot {
     	leftSpeed = leftDriveStick.getPitch().scale(sensitivity::read);
     	rightSpeed = rightDriveStick.getPitch().scale(sensitivity::read);
     	
+    	//Setup Manipulator Ranges
+    	liftRaisePower = manipulatorStick.getLeftY();
+    	liftExtendPower = manipulatorStick.getRightY();
+    	
     	//Setup Switches
     	lowerLiftLimit = Hardware.Switches.normallyOpen(LOWER_LIFT_LIMIT);
     	upperLiftLimit = Hardware.Switches.normallyOpen(UPPER_LIFT_LIMIT);
+    	lowerExtendLimit = Hardware.Switches.normallyOpen(LOWER_EXTEND_LIMIT);
+    	upperExtendLimit = Hardware.Switches.normallyOpen(UPPER_EXTEND_LIMIT);
     	
     	ballSuck = Strongback.switchReactor();
     	ballSpit = Strongback.switchReactor();
@@ -127,11 +135,6 @@ public class Robot extends IterativeRobot {
     	shootBall = Strongback.switchReactor();
     	shooterReverse = Strongback.switchReactor();
     	stopShooter = Strongback.switchReactor();
-    	
-    	raiseLift = Strongback.switchReactor();
-    	lowerLift = Strongback.switchReactor();
-    	extendLift = Strongback.switchReactor();
-    	retractLift = Strongback.switchReactor();
     	
     	//Setup Camera
     	cameraServer = CameraServer.getInstance();
@@ -221,7 +224,7 @@ public class Robot extends IterativeRobot {
     	ballSpit.onUntriggered(manipulatorStick.getB(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
     	
     	stopCollector.onTriggered(manipulatorStick.getLeftBumper(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
-    	/*
+    	
     	//This section handles the shooter
     	shootBall.onTriggered(manipulatorStick.getX(), ()->Strongback.submit(new ShootBall(ballShootMotor)));
     	shootBall.onUntriggered(manipulatorStick.getX(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
@@ -230,10 +233,10 @@ public class Robot extends IterativeRobot {
     	shooterReverse.onUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
 
     	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
-    	*/
+    	
     	//This section handles the lift
-    	raiseLift.onTriggered(manipulatorStick.getX(), ()->Strongback.submit(new LiftRaise(liftRaiseMotor, upperLiftLimit)));
-    	lowerLift.onTriggered(manipulatorStick.getY(), ()->Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit)));
+    	Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
+    	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
     	
     	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
