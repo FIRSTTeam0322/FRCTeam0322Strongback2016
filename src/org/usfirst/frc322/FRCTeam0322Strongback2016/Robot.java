@@ -29,12 +29,14 @@ public class Robot extends IterativeRobot {
 	private static final int LR_MOTOR_PORT = 1;
 	private static final int RF_MOTOR_PORT = 3;
 	private static final int RR_MOTOR_PORT = 2;
+	/*
 	private static final int LEFT_BALL_SUCK = 4;
 	private static final int RIGHT_BALL_SUCK = 5;
 	private static final int LEFT_BALL_SHOOT = 6;
 	private static final int RIGHT_BALL_SHOOT = 7;
-	private static final int LEFT_LIFT_MOTOR = 8;
-	private static final int RIGHT_LIFT_MOTOR = 9;
+	*/
+	private static final int LEFT_LIFT_MOTOR = 4;
+	private static final int RIGHT_LIFT_MOTOR = 5;
 	
 	private static final int LEFT_LIFT_EXTEND_CAN = 1;
 	private static final int RIGHT_LIFT_EXTEND_CAN = 2;
@@ -60,15 +62,15 @@ public class Robot extends IterativeRobot {
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
-	private Motor ballSuckMotor, ballShootMotor;
+	//private Motor ballSuckMotor, ballShootMotor;
 	private Motor liftRaiseMotor;
 	private Motor liftExtendMotor;
 	
 	private TankDrive drivetrain;
 	private ContinuousRange leftSpeed, rightSpeed;
 	private ContinuousRange liftRaisePower, liftExtendPower;
-	private SwitchReactor ballSuck, ballSpit, stopCollector;
-	private SwitchReactor shootBall, shooterReverse, stopShooter;
+	//private SwitchReactor ballSuck, ballSpit, stopCollector;
+	//private SwitchReactor shootBall, shooterReverse, stopShooter;
 
 	private ThreeAxisAccelerometer accel;
 	private AngleSensor gyro;
@@ -89,11 +91,12 @@ public class Robot extends IterativeRobot {
     	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors);
     	
     	//Setup manipulators
+    	/*
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
     	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
     									Hardware.Motors.talon(RIGHT_BALL_SHOOT).invert());
-    	
+    	*/
     	liftRaiseMotor = Motor.compose(Hardware.Motors.talonSRX(LEFT_LIFT_MOTOR),
     								Hardware.Motors.talonSRX(RIGHT_LIFT_MOTOR).invert());
     	liftExtendMotor = Motor.compose(Hardware.Motors.talon(LEFT_LIFT_EXTEND_CAN),
@@ -127,7 +130,7 @@ public class Robot extends IterativeRobot {
     	upperLiftLimit = Hardware.Switches.normallyOpen(UPPER_LIFT_LIMIT);
     	lowerExtendLimit = Hardware.Switches.normallyOpen(LOWER_EXTEND_LIMIT);
     	upperExtendLimit = Hardware.Switches.normallyOpen(UPPER_EXTEND_LIMIT);
-    	
+    	/*
     	ballSuck = Strongback.switchReactor();
     	ballSpit = Strongback.switchReactor();
     	stopCollector = Strongback.switchReactor();
@@ -135,7 +138,7 @@ public class Robot extends IterativeRobot {
     	shootBall = Strongback.switchReactor();
     	shooterReverse = Strongback.switchReactor();
     	stopShooter = Strongback.switchReactor();
-    	
+    	*/
     	//Setup Camera
     	cameraServer = CameraServer.getInstance();
         cameraServer.setQuality(25);
@@ -215,7 +218,7 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	//This line runs the drivetrain
     	drivetrain.tank(leftSpeed.read(), rightSpeed.read());
-
+    	/*
     	//This section handles the collector
     	ballSuck.onTriggered(manipulatorStick.getA(), ()->Strongback.submit(new SuckBall(ballSuckMotor)));
     	ballSuck.onUntriggered(manipulatorStick.getA(), ()->Strongback.submit(new StopCollector(ballSuckMotor)));
@@ -233,7 +236,7 @@ public class Robot extends IterativeRobot {
     	shooterReverse.onUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
 
     	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
-    	
+    	*/
     	//This section handles the lift
     	Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
     	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
