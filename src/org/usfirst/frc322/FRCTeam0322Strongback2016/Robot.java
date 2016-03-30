@@ -2,7 +2,6 @@
 package org.usfirst.frc322.FRCTeam0322Strongback2016;
 
 import org.strongback.Strongback;
-import org.strongback.SwitchReactor;
 import org.strongback.components.AngleSensor;
 import org.strongback.components.CurrentSensor;
 import org.strongback.components.Motor;
