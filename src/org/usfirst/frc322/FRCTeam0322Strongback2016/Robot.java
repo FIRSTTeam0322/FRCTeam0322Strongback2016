@@ -95,12 +95,12 @@ public class Robot extends IterativeRobot {
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
     	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
     									Hardware.Motors.talon(RIGHT_BALL_SHOOT).invert());
-    	*/
+    	
     	liftRaiseMotor = Motor.compose(Hardware.Motors.talonSRX(LEFT_LIFT_MOTOR),
     								Hardware.Motors.talonSRX(RIGHT_LIFT_MOTOR).invert());
     	liftExtendMotor = Motor.compose(Hardware.Motors.talon(LEFT_LIFT_EXTEND_CAN),
 										Hardware.Motors.talon(RIGHT_LIFT_EXTEND_CAN).invert());
-
+    	*/
      	//Setup joysticks
     	leftDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_DRIVESTICK_PORT);
     	rightDriveStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_DRIVESTICK_PORT);
@@ -123,13 +123,13 @@ public class Robot extends IterativeRobot {
     	//Setup Manipulator Ranges
     	liftRaisePower = manipulatorStick.getLeftY();
     	liftExtendPower = manipulatorStick.getRightY();
-    	
+    	/*
     	//Setup Switches
     	lowerLiftLimit = Hardware.Switches.normallyOpen(LOWER_LIFT_LIMIT);
     	upperLiftLimit = Hardware.Switches.normallyOpen(UPPER_LIFT_LIMIT);
     	lowerExtendLimit = Hardware.Switches.normallyOpen(LOWER_EXTEND_LIMIT);
     	upperExtendLimit = Hardware.Switches.normallyOpen(UPPER_EXTEND_LIMIT);
-    	/*
+    	
     	ballSuck = Strongback.switchReactor();
     	ballSpit = Strongback.switchReactor();
     	stopCollector = Strongback.switchReactor();
@@ -237,8 +237,8 @@ public class Robot extends IterativeRobot {
     	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
     	*/
     	//This section handles the lift
-    	Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
-    	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
+    	//Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
+    	//Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
     	
     	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
