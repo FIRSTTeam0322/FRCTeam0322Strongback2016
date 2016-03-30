@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	
 	private static final int AUTON_MODE = 4;
 	private static final double AUTON_SPEED = 0.55;
-	private static final double AUTON_DISTANCE = 20000.0;
+	private static final double AUTON_DISTANCE = 2500.0;
 	
 	private static final int LOWER_LIFT_LIMIT = 0;
 	private static final int UPPER_LIFT_LIMIT = 1;
@@ -58,6 +58,8 @@ public class Robot extends IterativeRobot {
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
+	
+	private static boolean stepOneComplete = false;
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
@@ -143,7 +145,7 @@ public class Robot extends IterativeRobot {
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
         
-        Strongback.dataRecorder()
+        /*Strongback.dataRecorder()
         			.register("Battery Volts", 1000, battery::getVoltage)
         			.register("Current load", 1000, current::getCurrent)
         			.register("Left Motors", leftDriveMotors)
@@ -157,8 +159,8 @@ public class Robot extends IterativeRobot {
         			.register("Z-Accel", 1000, accel.getZDirection()::getAcceleration)
         			.register("Left Encoder", 1000, leftEncoder::getAngle)
 					.register("Right Encoder", 1000, rightEncoder::getAngle);
-    	
-    	Strongback.configure().recordNoEvents().recordDataToFile("FRCTeam0322Strongback2016-").initialize();
+    	*/
+    	Strongback.configure().recordNoEvents().recordNoData()/*recordDataToFile("FRCTeam0322Strongback2016-")*/.initialize();
     }
 
 	@Override
@@ -186,9 +188,26 @@ public class Robot extends IterativeRobot {
     		break;
     	case 3:
     		Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
+    		/*
+    		if (Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
+        		Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
+        	} else if (Math.abs(leftEncoder.getAngle()) > 0 ||
+    				Math.abs(rightEncoder.getAngle()) > 0) {
+        		Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+    		}
+    		*/
     		break;
     	case 4:
-    		Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
+    		//Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
+    		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete) {
+        		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
+        	} else if ((Math.abs(leftEncoder.getAngle()) > 0 ||
+    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) {
+        		stepOneComplete = true;
+        		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
+    		}
     		break;
     	default:
     		Strongback.submit(new DoNothing());
@@ -201,6 +220,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
+    	System.out.println("Step One" + stepOneComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
@@ -262,5 +282,15 @@ public class Robot extends IterativeRobot {
 	@Override
     public void disabledPeriodic() {
 		// This section is only used when testing without wanting the robot to react
+		System.out.println("Gyro Angle " + gyro.getAngle());
+    	System.out.println();
+    	System.out.println("X-Axis " + accel.getXDirection().getAcceleration());
+    	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
+    	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
+    	System.out.println();
+    	System.out.println("Left Distance " + leftEncoder.getAngle());
+    	System.out.println("Right Distance " + rightEncoder.getAngle());
+    	System.out.println();
+    	System.out.println();
     }
 }
