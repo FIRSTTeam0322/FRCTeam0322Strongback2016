@@ -193,7 +193,7 @@ public class Robot extends IterativeRobot {
     	case 3:
     		//Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
     		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
-    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete) {
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete && !stepTwoComplete) {
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
         	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
     				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
@@ -207,7 +207,7 @@ public class Robot extends IterativeRobot {
     	case 4:
     		//Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
     		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
-    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete) {
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete && !stepTwoComplete) {
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
         	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
     				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
