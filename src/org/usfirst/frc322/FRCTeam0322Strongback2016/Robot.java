@@ -33,13 +33,13 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_BALL_SUCK = 5;
 	private static final int LEFT_BALL_SHOOT = 6;
 	private static final int RIGHT_BALL_SHOOT = 7;
-	*/
+	
 	private static final int LEFT_LIFT_MOTOR = 4;
 	private static final int RIGHT_LIFT_MOTOR = 5;
 	
 	private static final int LEFT_LIFT_EXTEND_CAN = 1;
 	private static final int RIGHT_LIFT_EXTEND_CAN = 2;
-	
+	*/
 	private static final int LEFT_ENCOODER_PORT_A = 0;
 	private static final int LEFT_ENCOODER_PORT_B = 1;
 	private static final int RIGHT_ENCOODER_PORT_A = 2;
@@ -55,9 +55,9 @@ public class Robot extends IterativeRobot {
 	private static final int LOWER_EXTEND_LIMIT = 2;
 	private static final int UPPER_EXTEND_LIMIT = 3;
 	*/
+	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
-	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
 	
 	private static boolean stepOneComplete, stepTwoComplete;
 
