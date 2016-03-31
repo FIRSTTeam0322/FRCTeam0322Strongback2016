@@ -47,29 +47,30 @@ public class Robot extends IterativeRobot {
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
 	
 	private static final int AUTON_MODE = 4;
-	private static final double AUTON_SPEED = 0.55;
-	private static final double AUTON_DISTANCE = 2500.0;
-	
+	private static final double AUTON_SPEED = 0.60;
+	private static final double AUTON_DISTANCE = 5000.0;
+	/*
 	private static final int LOWER_LIFT_LIMIT = 0;
 	private static final int UPPER_LIFT_LIMIT = 1;
 	private static final int LOWER_EXTEND_LIMIT = 2;
 	private static final int UPPER_EXTEND_LIMIT = 3;
-	
+	*/
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	private static final SPI.Port GYRO_PORT = SPI.Port.kOnboardCS0;
 	
-	private static boolean stepOneComplete = false;
+	private static boolean stepOneComplete, stepTwoComplete;
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
-	//private Motor ballSuckMotor, ballShootMotor;
+	/*
+	private Motor ballSuckMotor, ballShootMotor;
 	private Motor liftRaiseMotor;
 	private Motor liftExtendMotor;
-	
+	*/
 	private TankDrive drivetrain;
 	private ContinuousRange leftSpeed, rightSpeed;
-	private ContinuousRange liftRaisePower, liftExtendPower;
+	//private ContinuousRange liftRaisePower, liftExtendPower;
 	//private SwitchReactor ballSuck, ballSpit, stopCollector;
 	//private SwitchReactor shootBall, shooterReverse, stopShooter;
 
@@ -78,7 +79,7 @@ public class Robot extends IterativeRobot {
 	private AngleSensor leftEncoder, leftEncoderRaw;
 	private AngleSensor rightEncoder;
 	
-	private Switch upperLiftLimit, lowerLiftLimit, upperExtendLimit, lowerExtendLimit;
+	//private Switch upperLiftLimit, lowerLiftLimit, upperExtendLimit, lowerExtendLimit;
 	
 	public static CameraServer cameraServer;	
 	
@@ -90,9 +91,8 @@ public class Robot extends IterativeRobot {
     	Motor rightDriveMotors = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
     											Hardware.Motors.talon(RR_MOTOR_PORT));
     	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors);
-    	
-    	//Setup manipulators
     	/*
+    	//Setup manipulators
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
     	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
@@ -121,11 +121,11 @@ public class Robot extends IterativeRobot {
     	ContinuousRange sensitivity = leftDriveStick.getAxis(2).invert().map(t -> (t + 1.0) / 2.0);
     	leftSpeed = leftDriveStick.getPitch().scale(sensitivity::read);
     	rightSpeed = rightDriveStick.getPitch().scale(sensitivity::read);
-    	
+    	/*
     	//Setup Manipulator Ranges
     	liftRaisePower = manipulatorStick.getLeftY();
     	liftExtendPower = manipulatorStick.getRightY();
-    	/*
+    	
     	//Setup Switches
     	lowerLiftLimit = Hardware.Switches.normallyOpen(LOWER_LIFT_LIMIT);
     	upperLiftLimit = Hardware.Switches.normallyOpen(UPPER_LIFT_LIMIT);
@@ -140,12 +140,16 @@ public class Robot extends IterativeRobot {
     	shooterReverse = Strongback.switchReactor();
     	stopShooter = Strongback.switchReactor();
     	*/
+    	//Setup Autonomous Variables
+    	stepOneComplete = false;
+    	stepTwoComplete = false;
+    	
     	//Setup Camera
     	cameraServer = CameraServer.getInstance();
         cameraServer.setQuality(25);
         cameraServer.startAutomaticCapture("cam0");
         
-        /*Strongback.dataRecorder()
+        Strongback.dataRecorder()
         			.register("Battery Volts", 1000, battery::getVoltage)
         			.register("Current load", 1000, current::getCurrent)
         			.register("Left Motors", leftDriveMotors)
@@ -159,8 +163,8 @@ public class Robot extends IterativeRobot {
         			.register("Z-Accel", 1000, accel.getZDirection()::getAcceleration)
         			.register("Left Encoder", 1000, leftEncoder::getAngle)
 					.register("Right Encoder", 1000, rightEncoder::getAngle);
-    	*/
-    	Strongback.configure().recordNoEvents().recordNoData()/*recordDataToFile("FRCTeam0322Strongback2016-")*/.initialize();
+    	
+    	Strongback.configure().recordNoEvents().recordDataToFile("FRC0322Java-").initialize();
     }
 
 	@Override
@@ -187,26 +191,31 @@ public class Robot extends IterativeRobot {
         	}
     		break;
     	case 3:
-    		Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
-    		/*
-    		if (Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
-    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
-        		Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
-        	} else if (Math.abs(leftEncoder.getAngle()) > 0 ||
-    				Math.abs(rightEncoder.getAngle()) > 0) {
-        		Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
+    		//Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
+    		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete) {
+        		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
+        	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
+    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
+        		stepOneComplete = true;
+        		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
+    		} else if (stepTwoComplete = false) {
+    			stepTwoComplete = true;
+    			drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
     		}
-    		*/
     		break;
     	case 4:
     		//Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
     		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete) {
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
-        	} else if ((Math.abs(leftEncoder.getAngle()) > 0 ||
-    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) {
+        	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
+    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
+    		} else if (stepTwoComplete = false) {
+    			stepTwoComplete = true;
+    			drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
     		}
     		break;
     	default:
@@ -221,6 +230,7 @@ public class Robot extends IterativeRobot {
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
     	System.out.println("Step One" + stepOneComplete);
+    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
@@ -266,6 +276,8 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
+    	System.out.println("Step One" + stepOneComplete);
+    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
@@ -288,6 +300,8 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
+    	System.out.println("Step One" + stepOneComplete);
+    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
