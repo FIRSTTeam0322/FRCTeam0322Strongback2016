@@ -28,6 +28,8 @@ public class Robot extends IterativeRobot {
 	private static final int LR_MOTOR_PORT = 1;
 	private static final int RF_MOTOR_PORT = 3;
 	private static final int RR_MOTOR_PORT = 2;
+	
+	private static final int MANIPULATOR_PORT = 5;
 	/*
 	private static final int LEFT_BALL_SUCK = 4;
 	private static final int RIGHT_BALL_SUCK = 5;
@@ -63,6 +65,8 @@ public class Robot extends IterativeRobot {
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
+	
+	private Motor manipulatorMotor;
 	/*
 	private Motor ballSuckMotor, ballShootMotor;
 	private Motor liftRaiseMotor;
@@ -91,8 +95,10 @@ public class Robot extends IterativeRobot {
     	Motor rightDriveMotors = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
     											Hardware.Motors.talon(RR_MOTOR_PORT));
     	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors);
-    	/*
+    	
     	//Setup manipulators
+    	manipulatorMotor = Hardware.Motors.talon(MANIPULATOR_PORT); 
+    	/*
     	ballSuckMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SUCK),
     									Hardware.Motors.talon(RIGHT_BALL_SUCK).invert());
     	ballShootMotor = Motor.compose(Hardware.Motors.talon(LEFT_BALL_SHOOT),
@@ -265,10 +271,13 @@ public class Robot extends IterativeRobot {
     	shooterReverse.onUntriggered(manipulatorStick.getY(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
 
     	stopShooter.onTriggered(manipulatorStick.getRightBumper(), ()->Strongback.submit(new StopShooter(ballShootMotor)));
-    	*/
+    	
     	//This section handles the lift
-    	//Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
-    	//Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
+    	Strongback.submit(new LiftRaise(liftRaiseMotor, lowerLiftLimit, upperLiftLimit, liftRaisePower));
+    	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
+    	*/
+    	//This line controls the Manipulator
+    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read());
     	
     	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
