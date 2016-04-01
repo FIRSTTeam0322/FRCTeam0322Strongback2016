@@ -61,7 +61,7 @@ public class Robot extends IterativeRobot {
 	private static final SPI.Port ACCEL_PORT = SPI.Port.kOnboardCS1;
 	private static final Range ACCEL_RANGE = Range.k2G;
 	
-	private static boolean stepOneComplete, stepTwoComplete;
+	private static boolean stepOneComplete, stepTwoComplete, stepThreeComplete;
 
 	private FlightStick leftDriveStick, rightDriveStick;
 	private Gamepad manipulatorStick;
@@ -205,9 +205,13 @@ public class Robot extends IterativeRobot {
     				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
-    		} else if (stepTwoComplete = false) {
+    		} else if (((Math.abs(leftEncoder.getAngle()) < distance ||
+    				Math.abs(rightEncoder.getAngle()) < distance) || stepTwoComplete) && !stepThreeComplete) {
     			stepTwoComplete = true;
     			drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
+    		} else if (stepTwoComplete && !stepThreeComplete) {
+    				stepThreeComplete = true;	
+    				drivetrain.tank(0, 0);
     		}
     		break;
     	case 4:
@@ -219,9 +223,13 @@ public class Robot extends IterativeRobot {
     				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
-    		} else if (stepTwoComplete = false) {
+    		} else if (((Math.abs(leftEncoder.getAngle()) < distance ||
+    				Math.abs(rightEncoder.getAngle()) < distance) || stepTwoComplete) && !stepThreeComplete) {
     			stepTwoComplete = true;
     			drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
+    		} else if (stepTwoComplete && !stepThreeComplete) {
+    				stepThreeComplete = true;	
+    				drivetrain.tank(0, 0);
     		}
     		break;
     	default:
@@ -235,8 +243,6 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Step One" + stepOneComplete);
-    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
@@ -277,7 +283,7 @@ public class Robot extends IterativeRobot {
     	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
     	*/
     	//This line controls the Manipulator
-    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read() * 0.6);
+    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read());
     	
     	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
@@ -285,8 +291,6 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Step One" + stepOneComplete);
-    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
@@ -309,8 +313,6 @@ public class Robot extends IterativeRobot {
     	System.out.println("Y-Axis " + accel.getYDirection().getAcceleration());
     	System.out.println("Z-Axis " + accel.getZDirection().getAcceleration());
     	System.out.println();
-    	System.out.println("Step One" + stepOneComplete);
-    	System.out.println("Step Two" + stepTwoComplete);
     	System.out.println("Left Distance " + leftEncoder.getAngle());
     	System.out.println("Right Distance " + rightEncoder.getAngle());
     	System.out.println();
