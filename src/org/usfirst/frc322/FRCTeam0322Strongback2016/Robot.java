@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 public class Robot extends IterativeRobot {
-
+	private static final int AUTON_MODE = 4;
+	private static final double AUTON_SPEED = 0.60;
+	private static final double AUTON_DISTANCE = 5000.0;
+	
 	private static final int LEFT_DRIVESTICK_PORT = 0;
 	private static final int RIGHT_DRIVESTICK_PORT = 1;
 	private static final int MANIPULATOR_STICK_PORT = 2;
@@ -47,10 +50,7 @@ public class Robot extends IterativeRobot {
 	private static final int RIGHT_ENCOODER_PORT_A = 2;
 	private static final int RIGHT_ENCOODER_PORT_B = 3;
 	private static final double ENCOODER_PULSE_DISTANCE = 1.0;
-	
-	private static final int AUTON_MODE = 4;
-	private static final double AUTON_SPEED = 0.60;
-	private static final double AUTON_DISTANCE = 5000.0;
+
 	/*
 	private static final int LOWER_LIFT_LIMIT = 0;
 	private static final int UPPER_LIFT_LIMIT = 1;
