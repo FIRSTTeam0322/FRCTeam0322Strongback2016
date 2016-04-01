@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 public class Robot extends IterativeRobot {
-	private static final int AUTON_MODE = 4;
+	private static final int AUTON_MODE = 2;
 	private static final double AUTON_SPEED = 0.60;
 	private static final double AUTON_DISTANCE = 5000.0;
 	
@@ -170,7 +170,7 @@ public class Robot extends IterativeRobot {
         			.register("Left Encoder", 1000, leftEncoder::getAngle)
 					.register("Right Encoder", 1000, rightEncoder::getAngle);
     	
-    	Strongback.configure().recordNoEvents().recordDataToFile("FRC0322Java-").initialize();
+    	Strongback.configure().recordNoEvents().recordNoData()/*recordDataToFile("FRC0322Java-")*/.initialize();
     }
 
 	@Override
@@ -201,8 +201,8 @@ public class Robot extends IterativeRobot {
     		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete && !stepTwoComplete) {
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
-        	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
-    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
+        	} else if (((Math.abs(leftEncoder.getAngle()) <= 0 ||
+    				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
     		} else if (stepTwoComplete = false) {
@@ -215,8 +215,8 @@ public class Robot extends IterativeRobot {
     		if ((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) && !stepOneComplete && !stepTwoComplete) {
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
-        	} else if (((Math.abs(leftEncoder.getAngle()) > 0 ||
-    				Math.abs(rightEncoder.getAngle()) > 0) || stepOneComplete) && !stepTwoComplete) {
+        	} else if (((Math.abs(leftEncoder.getAngle()) <= 0 ||
+    				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
     		} else if (stepTwoComplete = false) {
@@ -277,7 +277,7 @@ public class Robot extends IterativeRobot {
     	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
     	*/
     	//This line controls the Manipulator
-    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read());
+    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read() * 0.6);
     	
     	System.out.println("Gyro Angle " + gyro.getAngle());
     	System.out.println();
