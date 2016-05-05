@@ -229,8 +229,8 @@ public class Robot extends IterativeRobot {
     				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
-    		} else if (((Math.abs(leftEncoder.getAngle()) < distance ||
-    				Math.abs(rightEncoder.getAngle()) < distance) || stepTwoComplete) && !stepThreeComplete) {
+    		} else if (((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) || stepTwoComplete) && !stepThreeComplete) {
     			stepTwoComplete = true;
     			drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
     		} else if (stepTwoComplete && !stepThreeComplete) {
@@ -247,8 +247,8 @@ public class Robot extends IterativeRobot {
     				Math.abs(rightEncoder.getAngle()) <= 0) || stepOneComplete) && !stepTwoComplete) {
         		stepOneComplete = true;
         		drivetrain.tank(-AUTON_SPEED, -AUTON_SPEED);
-    		} else if (((Math.abs(leftEncoder.getAngle()) < distance ||
-    				Math.abs(rightEncoder.getAngle()) < distance) || stepTwoComplete) && !stepThreeComplete) {
+    		} else if (((Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
+    				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) || stepTwoComplete) && !stepThreeComplete) {
     			stepTwoComplete = true;
     			drivetrain.tank(AUTON_SPEED, AUTON_SPEED);
     		} else if (stepTwoComplete && !stepThreeComplete) {
