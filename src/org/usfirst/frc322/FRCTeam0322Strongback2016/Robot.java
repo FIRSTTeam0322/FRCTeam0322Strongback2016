@@ -104,7 +104,7 @@ public class Robot extends IterativeRobot {
     											Hardware.Motors.talon(LR_MOTOR_PORT));
     	Motor rightDriveMotors = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT),
     											Hardware.Motors.talon(RR_MOTOR_PORT));
-    	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors);
+    	drivetrain = new TankDrive(leftDriveMotors, rightDriveMotors.invert());
     	
     	//Setup manipulators
     	manipulatorMotor = Hardware.Motors.talon(MANIPULATOR_PORT); 
