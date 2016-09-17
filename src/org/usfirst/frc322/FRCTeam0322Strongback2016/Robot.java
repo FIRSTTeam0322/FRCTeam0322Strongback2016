@@ -298,7 +298,7 @@ public class Robot extends IterativeRobot {
     	Strongback.submit(new LiftExtend(liftExtendMotor, lowerExtendLimit, upperExtendLimit, liftExtendPower));
     	*/
     	//This line controls the Manipulator
-    	manipulatorMotor.setSpeed(manipulatorStick.getRightY().read());
+    	//manipulatorMotor.setSpeed(manipulatorStick.getRightY().read());
     	
     	//debugPrint();
     }
