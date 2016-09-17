@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 public class Robot extends IterativeRobot {
 	private static int AUTON_MODE = 2;
-	private static double AUTON_SPEED = 0.60;
-	private static final double AUTON_DISTANCE = 5000.0;
+	private static double AUTON_SPEED = 0.80;
+	private static final double AUTON_DISTANCE = 10000.0;
 	
 	private static final int LEFT_DRIVESTICK_PORT = 0;
 	private static final int RIGHT_DRIVESTICK_PORT = 1;
@@ -213,12 +213,14 @@ public class Robot extends IterativeRobot {
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
     			Strongback.submit(new DriveForward(drivetrain, AUTON_SPEED));
     		}
+    		else Strongback.submit(new StopDriving(drivetrain));
     		break;
     	case 2:
     		if (Math.abs(leftEncoder.getAngle()) < AUTON_DISTANCE ||
     				Math.abs(rightEncoder.getAngle()) < AUTON_DISTANCE) {
         		Strongback.submit(new DriveBackward(drivetrain, AUTON_SPEED));
         	}
+    		else Strongback.submit(new StopDriving(drivetrain));
     		break;
     	case 3:
     		//Strongback.submit(new DriveForwardAndBack(drivetrain, AUTON_SPEED));
@@ -237,6 +239,7 @@ public class Robot extends IterativeRobot {
     				stepThreeComplete = true;	
     				drivetrain.tank(0, 0);
     		}
+    		else Strongback.submit(new StopDriving(drivetrain));
     		break;
     	case 4:
     		//Strongback.submit(new DriveBackwardAndFore(drivetrain, AUTON_SPEED));
@@ -255,6 +258,7 @@ public class Robot extends IterativeRobot {
     				stepThreeComplete = true;	
     				drivetrain.tank(0, 0);
     		}
+    		else Strongback.submit(new StopDriving(drivetrain));
     		break;
     	default:
     		Strongback.submit(new DoNothing());
