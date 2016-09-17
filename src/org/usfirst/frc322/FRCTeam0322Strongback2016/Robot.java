@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.interfaces.Accelerometer.Range;
 
 public class Robot extends IterativeRobot {
 	private static int AUTON_MODE = 2;
-	private static double AUTON_SPEED = 0.80;
+	private static double AUTON_SPEED = 0.60;
 	private static final double AUTON_DISTANCE = 10000.0;
 	
 	private static final int LEFT_DRIVESTICK_PORT = 0;

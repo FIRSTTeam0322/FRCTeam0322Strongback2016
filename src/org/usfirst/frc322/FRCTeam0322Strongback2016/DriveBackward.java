@@ -11,7 +11,7 @@ public class DriveBackward extends Command {
 		super(drivetrain);
 		this.drivetrain = drivetrain;
 		this.speed = speed;
-		this.rightSpeed = (speed);
+		this.rightSpeed = (speed * 0.8);
 	}
 	
 	@Override
